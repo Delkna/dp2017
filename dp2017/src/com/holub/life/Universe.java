@@ -1,12 +1,19 @@
 package com.holub.life;
 
 import java.io.*;
-
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+import com.holub.color.Blue;
+import com.holub.color.Bright;
+import com.holub.color.ColorSet;
+import com.holub.color.Dark;
+import com.holub.color.Yellow;
 import com.holub.io.Files;
+import com.holub.ui.Colors;
 import com.holub.ui.MenuSite;
 
 import com.holub.life.Cell;
@@ -29,6 +36,7 @@ import com.holub.life.Resident;
 public class Universe extends JPanel
 {	private 		final Cell  	outermostCell;
 	private static	final Universe 	theInstance = new Universe();
+	private ArrayList<ColorSet> colorList = new ArrayList<ColorSet>();
 
 	/** The default height and width of a Neighborhood in cells.
 	 *  If it's too big, you'll run too slowly because
@@ -52,12 +60,18 @@ public class Universe extends JPanel
 		// in the current implementation causes the program to fail
 		// miserably if the overall size of the grid is too big to fit
 		// on the screen.
+		
+		// border / live / dead / tag
+		colorList.add(new Yellow());
+		colorList.add(new Dark());
+		colorList.add(new Blue());
+		colorList.add(new Bright());		
 
 		outermostCell = new Neighborhood
 						(	DEFAULT_GRID_SIZE,
 							new Neighborhood
 							(	DEFAULT_GRID_SIZE,
-								new Resident()
+								new Resident(colorList.get(0))
 							)
 						);
 
@@ -138,7 +152,22 @@ public class Universe extends JPanel
 		        }
 			}
 		);
-
+		
+		Iterator<ColorSet> it = colorList.iterator();
+		while(it.hasNext()) {
+			ColorSet cs = it.next();
+			MenuSite.addLine
+			(	this, "Skin", cs.getMenuName(),
+				new ActionListener()
+				{	public void actionPerformed(ActionEvent e)
+			        {	
+						Resident.changeColor(cs);
+						repaint();
+			        }
+				}
+			);
+		}
+		
 		Clock.instance().addClockListener //{=Universe.clock.subscribe}
 		(	new Clock.Listener()
 			{	public void tick()

@@ -1,14 +1,11 @@
 package com.holub.life;
 
 import java.awt.*;
-import javax.swing.*;
-import com.holub.ui.Colors;	// Contains constants specifying various
-							// colors not defined in java.awt.Color.
+
+import com.holub.color.ColorSet;
 import com.holub.life.Cell;
 import com.holub.life.Storable;
 import com.holub.life.Direction;
-import com.holub.life.Neighborhood;
-import com.holub.life.Universe;
 
 /*** ****************************************************************
  * The Resident class implements a single cell---a "resident" of a
@@ -19,12 +16,24 @@ import com.holub.life.Universe;
 
 public final class Resident implements Cell
 {
-	private static final Color BORDER_COLOR = Colors.DARK_YELLOW;
-	private static final Color LIVE_COLOR 	= Color.RED;
-	private static final Color DEAD_COLOR   = Colors.LIGHT_YELLOW;
+	private static ColorSet COLOR_SET;
+	private static Color BORDER_COLOR;
+	private static Color LIVE_COLOR;
+	private static Color DEAD_COLOR;
 
 	private boolean amAlive 	= false;
 	private boolean willBeAlive	= false;
+	
+	public Resident(ColorSet cs) {
+		COLOR_SET = cs;
+		changeColor(cs);		
+	}
+	
+	public static void changeColor(ColorSet cs) {
+		BORDER_COLOR = cs.getBorderColor();
+		LIVE_COLOR = cs.getLiveColor();
+		DEAD_COLOR = cs.getDeadColor();
+	}
 
 	private boolean isStable(){return amAlive == willBeAlive; }
 
@@ -104,7 +113,7 @@ public final class Resident implements Cell
 
 	public void	   clear()			{amAlive = willBeAlive = false; }
 	public boolean isAlive()		{return amAlive;			    }
-	public Cell    create()			{return new Resident();			}
+	public Cell    create()			{return new Resident(COLOR_SET);	}
 	public int 	   widthInCells()	{return 1;}
 
 	public Direction isDisruptiveTo()
