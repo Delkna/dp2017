@@ -110,7 +110,20 @@ public class Universe extends JPanel
 				}
 			}
 		);
-
+		
+		addMouseMotionListener
+		(
+			new MouseAdapter() {
+				public void mouseDragged(MouseEvent e) {
+					Rectangle bounds = getBounds();
+					bounds.x = 0;
+					bounds.y = 0;
+					outermostCell.userClicked(e.getPoint(), bounds);
+					repaint();
+				}
+			}
+		);
+		
 		MenuSite.addLine( this, "Grid", "Clear",
 			new ActionListener()
 			{	public void actionPerformed(ActionEvent e)
