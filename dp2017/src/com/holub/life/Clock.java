@@ -25,7 +25,13 @@ import com.holub.tools.Publisher;
  *
  * @include /etc/license.txt
  */
-class ClockSpeed{	
+class ClockSpeed{
+	public static final int SETCLOCK = 0;
+	public static final int HALT = 1;
+	public static final int TICK = 2;
+	public static final int SLOWER = 3;
+	public static final int FASTER = 4;
+	
 	final private String name;
 	final private int type;
 	final private int cycleMiliSecond;	
@@ -102,25 +108,25 @@ public class Clock
 			menu = (ClockSpeed)it.next();
 			if(menu.getName().equals(name)) {
 				switch(menu.getType()) {
-				case 0: // agonizing, slow, medium, fast
+				case ClockSpeed.SETCLOCK: // agonizing, slow, medium, fast
 					clockMiliSecond = menu.getCycleMiliSecond();
 					startTicking(clockMiliSecond);
 					break;
 					
-				case 1: // halt
+				case ClockSpeed.HALT: // halt
 					stop();
 					break;
 					
-				case 2: // tick
+				case ClockSpeed.TICK: // tick
 					tick();
 					break;
 					
-				case 3: // slower
+				case ClockSpeed.SLOWER: // slower
 					clockMiliSecond *= 1.3;
 					startTicking(clockMiliSecond);
 					break;
 					
-				case 4: // faster
+				case ClockSpeed.FASTER: // faster
 					clockMiliSecond *= 0.7;
 					startTicking(clockMiliSecond);
 					break;
@@ -145,14 +151,14 @@ public class Clock
 	 */
 	private void createMenus()
 	{
-		clockSpeedList.add(new ClockSpeed("Halt", 1, 0));
-		clockSpeedList.add(new ClockSpeed("Tick", 2, 0));
-		clockSpeedList.add(new ClockSpeed("Agonizing", 0, 500));
-		clockSpeedList.add(new ClockSpeed("Slow", 0, 150));
-		clockSpeedList.add(new ClockSpeed("Medium", 0, 70));
-		clockSpeedList.add(new ClockSpeed("Fast", 0, 30));
-		clockSpeedList.add(new ClockSpeed("Slower", 3, 0));
-		clockSpeedList.add(new ClockSpeed("Faster", 4, 0));
+		clockSpeedList.add(new ClockSpeed("Halt", ClockSpeed.HALT, 0));
+		clockSpeedList.add(new ClockSpeed("Tick", ClockSpeed.TICK, 0));
+		clockSpeedList.add(new ClockSpeed("Agonizing", ClockSpeed.SETCLOCK, 500));
+		clockSpeedList.add(new ClockSpeed("Slow", ClockSpeed.SETCLOCK, 150));
+		clockSpeedList.add(new ClockSpeed("Medium", ClockSpeed.SETCLOCK, 70));
+		clockSpeedList.add(new ClockSpeed("Fast", ClockSpeed.SETCLOCK, 30));
+		clockSpeedList.add(new ClockSpeed("Slower", ClockSpeed.SLOWER, 0));
+		clockSpeedList.add(new ClockSpeed("Faster", ClockSpeed.FASTER, 0));
 		
 		// First set up a single listener that will handle all the
 		// menu-selection events except "Exit"
