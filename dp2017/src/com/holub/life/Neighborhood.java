@@ -369,18 +369,6 @@ public final class Neighborhood implements Cell
 				}
 				subcell.translate(-compoundWidth, subcell.height);
 			}
-
-			g = g.create();
-			g.setColor( Colors.LIGHT_ORANGE );
-			g.drawRect( here.x, here.y, here.width, here.height );
-
-			if( amActive )
-			{	g.setColor( Color.BLUE );
-				g.drawRect(	here.x+1,	  here.y+1,
-							here.width-2, here.height-2 );
-			}
-
-			g.dispose();
 		}
 		catch( InterruptedException e ) 
 		{	// thrown from waitForTrue. Just

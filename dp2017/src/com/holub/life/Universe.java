@@ -44,7 +44,7 @@ public class Universe extends JPanel
 	 *  to do. If it's too small, you have too many blocks to check.
 	 *  I've found that 8 is a good compromise.
 	 */
-	private static final int  DEFAULT_GRID_SIZE = 8;
+	private static final int  DEFAULT_GRID_SIZE = 64;
 
 	/** The size of the smallest "atomic" cell---a Resident object.
 	 *  This size is extrinsic to a Resident (It's passed into the
@@ -67,13 +67,7 @@ public class Universe extends JPanel
 		colorList.add(new Blue());
 		colorList.add(new Bright());		
 
-		outermostCell = new Neighborhood
-						(	DEFAULT_GRID_SIZE,
-							new Neighborhood
-							(	DEFAULT_GRID_SIZE,
-								new Resident(colorList.get(0))
-							)
-						);
+		outermostCell = new Neighborhood(DEFAULT_GRID_SIZE, new Resident(colorList.get(0)));
 
 		final Dimension PREFERRED_SIZE =
 						new Dimension
