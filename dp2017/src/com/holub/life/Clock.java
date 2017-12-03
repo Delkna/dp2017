@@ -25,16 +25,12 @@ import com.holub.tools.Publisher;
  *
  * @include /etc/license.txt
  */
-enum ClockSpeed {
-	
-	HALT("Halt", 1, 0), TICK("Tick", 2, 0), AGONIZING("Agonizing", 0, 500), SLOW("Slow", 0, 150),
-	MEDIUM("Medium", 0, 70), FAST("Fast", 0, 30), SLOWER("Slower", 3, 0), FASTER("Faster", 4, 0);
-	
+class ClockSpeed{	
 	final private String name;
 	final private int type;
 	final private int cycleMiliSecond;	
 	
-	private ClockSpeed(String name, int type, int cycleMiliSecond) {
+	public ClockSpeed(String name, int type, int cycleMiliSecond) {
 		this.name = name;
 		this.type = type;
 		this.cycleMiliSecond = cycleMiliSecond;
@@ -57,8 +53,8 @@ public class Clock
 {	private Timer			clock		= new Timer();
 	private TimerTask		tick		= null;
 	private int				clockMiliSecond = -1;
+	ArrayList<ClockSpeed> clockSpeedList = new ArrayList<ClockSpeed>();
 	
-
 	// The clock can't be an everything-is-static singleton because
 	// it creates a menu, and it can't do that until the menus
 	// are established.
@@ -100,14 +96,14 @@ public class Clock
 	}
 	
 	public void processTick(String name) {
-		if(name.equals(ClockSpeed.TICK.getName())) {
-			tick();
-		}
-		for(ClockSpeed cs : ClockSpeed.values()) {
-			if(name.equals(cs.getName())) {
-				switch(cs.getType()) {
+		Iterator<ClockSpeed> it = clockSpeedList.iterator();
+		ClockSpeed menu;
+		while(it.hasNext()) {
+			menu = (ClockSpeed)it.next();
+			if(menu.getName().equals(name)) {
+				switch(menu.getType()) {
 				case 0: // agonizing, slow, medium, fast
-					clockMiliSecond = cs.getCycleMiliSecond();
+					clockMiliSecond = menu.getCycleMiliSecond();
 					startTicking(clockMiliSecond);
 					break;
 					
@@ -131,8 +127,8 @@ public class Clock
 					
 				default:
 					break;
-				}				
-				break;
+				}
+				break;				
 			}
 		}
 	}
@@ -149,6 +145,15 @@ public class Clock
 	 */
 	private void createMenus()
 	{
+		clockSpeedList.add(new ClockSpeed("Halt", 1, 0));
+		clockSpeedList.add(new ClockSpeed("Tick", 2, 0));
+		clockSpeedList.add(new ClockSpeed("Agonizing", 0, 500));
+		clockSpeedList.add(new ClockSpeed("Slow", 0, 150));
+		clockSpeedList.add(new ClockSpeed("Medium", 0, 70));
+		clockSpeedList.add(new ClockSpeed("Fast", 0, 30));
+		clockSpeedList.add(new ClockSpeed("Slower", 3, 0));
+		clockSpeedList.add(new ClockSpeed("Faster", 4, 0));
+		
 		// First set up a single listener that will handle all the
 		// menu-selection events except "Exit"
 
@@ -161,14 +166,13 @@ public class Clock
 				}
 			};
 																	// {=midSetup}
-		MenuSite.addLine(this, "Go", ClockSpeed.HALT.getName(), modifier);
-		MenuSite.addLine(this, "Go", ClockSpeed.TICK.getName(),	modifier);
-		MenuSite.addLine(this, "Go", ClockSpeed.AGONIZING.getName(), modifier);
-		MenuSite.addLine(this, "Go", ClockSpeed.SLOW.getName(), modifier);
-		MenuSite.addLine(this, "Go", ClockSpeed.MEDIUM.getName(), modifier);
-		MenuSite.addLine(this, "Go", ClockSpeed.FAST.getName(), modifier); 
-		MenuSite.addLine(this, "Go", ClockSpeed.SLOWER.getName(), modifier);
-		MenuSite.addLine(this, "Go", ClockSpeed.FASTER.getName(), modifier); // {=endSetup}
+		Iterator<ClockSpeed> it = clockSpeedList.iterator();
+		ClockSpeed menu;
+		while(it.hasNext()) {
+			menu = (ClockSpeed)it.next();
+			MenuSite.addLine(this, "Go", menu.getName(), modifier);
+		}
+		// {=endSetup}
 	}	//{=endCreateMenus}
 
 	private Publisher publisher = new Publisher();
