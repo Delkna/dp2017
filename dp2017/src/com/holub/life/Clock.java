@@ -25,10 +25,39 @@ import com.holub.tools.Publisher;
  *
  * @include /etc/license.txt
  */
+enum ClockSpeed {
+	
+	HALT("Halt", 1, 0), TICK("Tick", 2, 0), AGONIZING("Agonizing", 0, 500), SLOW("Slow", 0, 150),
+	MEDIUM("Medium", 0, 70), FAST("Fast", 0, 30), SLOWER("Slower", 3, 0), FASTER("Faster", 4, 0);
+	
+	final private String name;
+	final private int type;
+	final private int cycleMiliSecond;	
+	
+	private ClockSpeed(String name, int type, int cycleMiliSecond) {
+		this.name = name;
+		this.type = type;
+		this.cycleMiliSecond = cycleMiliSecond;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int getType() {
+		return type;
+	}
+	
+	public int getCycleMiliSecond() {
+		return cycleMiliSecond;
+	}
+}
 
 public class Clock
 {	private Timer			clock		= new Timer();
 	private TimerTask		tick		= null;
+	private int				clockMiliSecond = -1;
+	
 
 	// The clock can't be an everything-is-static singleton because
 	// it creates a menu, and it can't do that until the menus
@@ -69,6 +98,44 @@ public class Clock
 			clock.scheduleAtFixedRate( tick, 0, millisecondsBetweenTicks);
 		}
 	}
+	
+	public void processTick(String name) {
+		if(name.equals(ClockSpeed.TICK.getName())) {
+			tick();
+		}
+		for(ClockSpeed cs : ClockSpeed.values()) {
+			if(name.equals(cs.getName())) {
+				switch(cs.getType()) {
+				case 0: // agonizing, slow, medium, fast
+					clockMiliSecond = cs.getCycleMiliSecond();
+					startTicking(clockMiliSecond);
+					break;
+					
+				case 1: // halt
+					stop();
+					break;
+					
+				case 2: // tick
+					tick();
+					break;
+					
+				case 3: // slower
+					clockMiliSecond *= 1.3;
+					startTicking(clockMiliSecond);
+					break;
+					
+				case 4: // faster
+					clockMiliSecond *= 0.7;
+					startTicking(clockMiliSecond);
+					break;
+					
+				default:
+					break;
+				}				
+				break;
+			}
+		}
+	}
 
 	/** Stop the clock
 	 */
@@ -90,24 +157,18 @@ public class Clock
 			{	public void actionPerformed(ActionEvent e)
 				{
 					String name = ((JMenuItem)e.getSource()).getName();
-					char toDo = name.charAt(0);
-
-					if( toDo=='T' )
-						tick();				      // single tick
-					else
-						startTicking(   toDo=='A' ? 500:	  // agonizing
-										toDo=='S' ? 150:	  // slow
-										toDo=='M' ? 70 :	  // medium
-										toDo=='F' ? 30 : 0 ); // fast
+					processTick(name);
 				}
 			};
 																	// {=midSetup}
-		MenuSite.addLine(this,"Go","Halt",  			modifier);
-		MenuSite.addLine(this,"Go","Tick (Single Step)",modifier);
-		MenuSite.addLine(this,"Go","Agonizing",	 	  	modifier);
-		MenuSite.addLine(this,"Go","Slow",		 		modifier);
-		MenuSite.addLine(this,"Go","Medium",	 	 	modifier);
-		MenuSite.addLine(this,"Go","Fast",				modifier); // {=endSetup}
+		MenuSite.addLine(this, "Go", ClockSpeed.HALT.getName(), modifier);
+		MenuSite.addLine(this, "Go", ClockSpeed.TICK.getName(),	modifier);
+		MenuSite.addLine(this, "Go", ClockSpeed.AGONIZING.getName(), modifier);
+		MenuSite.addLine(this, "Go", ClockSpeed.SLOW.getName(), modifier);
+		MenuSite.addLine(this, "Go", ClockSpeed.MEDIUM.getName(), modifier);
+		MenuSite.addLine(this, "Go", ClockSpeed.FAST.getName(), modifier); 
+		MenuSite.addLine(this, "Go", ClockSpeed.SLOWER.getName(), modifier);
+		MenuSite.addLine(this, "Go", ClockSpeed.FASTER.getName(), modifier); // {=endSetup}
 	}	//{=endCreateMenus}
 
 	private Publisher publisher = new Publisher();
