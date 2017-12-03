@@ -2,6 +2,7 @@ package com.holub.life;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.awt.*;
 import javax.swing.*;
@@ -37,6 +38,10 @@ public class Universe extends JPanel
 {	private 		final Cell  	outermostCell;
 	private static	final Universe 	theInstance = new Universe();
 	private ArrayList<ColorSet> colorList = new ArrayList<ColorSet>();
+	
+	private boolean[][] isClicked = new boolean[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
+	
+	
 
 	/** The default height and width of a Neighborhood in cells.
 	 *  If it's too big, you'll run too slowly because
@@ -102,11 +107,18 @@ public class Universe extends JPanel
 		addMouseListener					//{=Universe.mouse}
 		(	new MouseAdapter()
 			{	public void mousePressed(MouseEvent e)
-				{	Rectangle bounds = getBounds();
+				{	
+					Rectangle bounds = getBounds();
 					bounds.x = 0;
 					bounds.y = 0;
 					outermostCell.userClicked(e.getPoint(),bounds);
 					repaint();
+				}
+			
+				public void mouseReleased(MouseEvent e) {
+					for(int i=0; i<DEFAULT_GRID_SIZE; i++) {
+						Arrays.fill(isClicked[i], false);
+					}					
 				}
 			}
 		);
@@ -116,10 +128,18 @@ public class Universe extends JPanel
 			new MouseAdapter() {
 				public void mouseDragged(MouseEvent e) {
 					Rectangle bounds = getBounds();
-					bounds.x = 0;
-					bounds.y = 0;
-					outermostCell.userClicked(e.getPoint(), bounds);
-					repaint();
+					int pixelSize = bounds.width / DEFAULT_GRID_SIZE;
+					Point clickPoint = e.getPoint();
+					int col = clickPoint.x / pixelSize;
+					int row = clickPoint.y / pixelSize;
+					
+					if(isClicked[col][row] == false) {
+						isClicked[col][row] = true;
+						bounds.x = 0;
+						bounds.y = 0;					
+						outermostCell.userClicked(e.getPoint(), bounds);
+						repaint();
+					}
 				}
 			}
 		);
