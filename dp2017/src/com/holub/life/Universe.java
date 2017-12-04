@@ -108,6 +108,11 @@ public class Universe extends JPanel
 			{	public void mousePressed(MouseEvent e)
 				{	
 					Rectangle bounds = getBounds();
+					Point clickPoint = e.getPoint();
+					int pixelSize = bounds.width / DEFAULT_GRID_SIZE;
+					int col = clickPoint.x / pixelSize;
+					int row = clickPoint.y / pixelSize;
+					isClicked[col][row] = true;
 					bounds.x = 0;
 					bounds.y = 0;
 					outermostCell.userClicked(e.getPoint(),bounds);
