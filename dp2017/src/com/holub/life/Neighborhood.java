@@ -11,9 +11,7 @@ import com.holub.life.Cell;
 import com.holub.ui.MenuSite;
 import com.holub.ui.Colors;
 import com.holub.asynch.ConditionVariable;
-
 import com.holub.life.Cell;
-import com.holub.life.Clock;
 import com.holub.life.Direction;
 import com.holub.life.Storable;
 

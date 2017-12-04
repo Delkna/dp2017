@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.Timer;		// overrides java.awt.timer
 import com.holub.ui.MenuSite;
+import com.holub.clockoption.*;
 import com.holub.tools.Publisher;
 
 /***
@@ -25,41 +26,11 @@ import com.holub.tools.Publisher;
  *
  * @include /etc/license.txt
  */
-class ClockSpeed{
-	public static final int SETCLOCK = 0;
-	public static final int HALT = 1;
-	public static final int TICK = 2;
-	public static final int SLOWER = 3;
-	public static final int FASTER = 4;
-	
-	final private String name;
-	final private int type;
-	final private int cycleMiliSecond;	
-	
-	public ClockSpeed(String name, int type, int cycleMiliSecond) {
-		this.name = name;
-		this.type = type;
-		this.cycleMiliSecond = cycleMiliSecond;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public int getType() {
-		return type;
-	}
-	
-	public int getCycleMiliSecond() {
-		return cycleMiliSecond;
-	}
-}
-
 public class Clock
 {	private Timer			clock		= new Timer();
 	private TimerTask		tick		= null;
 	private int				clockMiliSecond = -1;
-	ArrayList<ClockSpeed> clockSpeedList = new ArrayList<ClockSpeed>();
+	ArrayList<ClockOption> clockSpeedList = new ArrayList<ClockOption>();
 	
 	// The clock can't be an everything-is-static singleton because
 	// it creates a menu, and it can't do that until the menus
@@ -102,31 +73,31 @@ public class Clock
 	}
 	
 	public void processTick(String name) {
-		Iterator<ClockSpeed> it = clockSpeedList.iterator();
-		ClockSpeed menu;
+		Iterator<ClockOption> it = clockSpeedList.iterator();
+		ClockOption menu;
 		while(it.hasNext()) {
-			menu = (ClockSpeed)it.next();
+			menu = (ClockOption)it.next();
 			if(menu.getName().equals(name)) {
 				switch(menu.getType()) {
-				case ClockSpeed.SETCLOCK: // agonizing, slow, medium, fast
+				case ClockOption.SETCLOCK: // agonizing, slow, medium, fast
 					clockMiliSecond = menu.getCycleMiliSecond();
 					startTicking(clockMiliSecond);
 					break;
 					
-				case ClockSpeed.HALT: // halt
+				case ClockOption.HALT: // halt
 					stop();
 					break;
 					
-				case ClockSpeed.TICK: // tick
+				case ClockOption.TICK: // tick
 					tick();
 					break;
 					
-				case ClockSpeed.SLOWER: // slower
+				case ClockOption.SLOWER: // slower
 					clockMiliSecond *= 1.3;
 					startTicking(clockMiliSecond);
 					break;
 					
-				case ClockSpeed.FASTER: // faster
+				case ClockOption.FASTER: // faster
 					clockMiliSecond *= 0.7;
 					startTicking(clockMiliSecond);
 					break;
@@ -151,14 +122,14 @@ public class Clock
 	 */
 	private void createMenus()
 	{
-		clockSpeedList.add(new ClockSpeed("Halt", ClockSpeed.HALT, 0));
-		clockSpeedList.add(new ClockSpeed("Tick", ClockSpeed.TICK, 0));
-		clockSpeedList.add(new ClockSpeed("Agonizing", ClockSpeed.SETCLOCK, 500));
-		clockSpeedList.add(new ClockSpeed("Slow", ClockSpeed.SETCLOCK, 150));
-		clockSpeedList.add(new ClockSpeed("Medium", ClockSpeed.SETCLOCK, 70));
-		clockSpeedList.add(new ClockSpeed("Fast", ClockSpeed.SETCLOCK, 30));
-		clockSpeedList.add(new ClockSpeed("Slower", ClockSpeed.SLOWER, 0));
-		clockSpeedList.add(new ClockSpeed("Faster", ClockSpeed.FASTER, 0));
+		clockSpeedList.add(new Halt());
+		clockSpeedList.add(new Tick());
+		clockSpeedList.add(new Agonizing());
+		clockSpeedList.add(new Slow());
+		clockSpeedList.add(new Medium());
+		clockSpeedList.add(new Fast());
+		clockSpeedList.add(new Slow());
+		clockSpeedList.add(new Fast());
 		
 		// First set up a single listener that will handle all the
 		// menu-selection events except "Exit"
@@ -172,10 +143,10 @@ public class Clock
 				}
 			};
 																	// {=midSetup}
-		Iterator<ClockSpeed> it = clockSpeedList.iterator();
-		ClockSpeed menu;
+		Iterator<ClockOption> it = clockSpeedList.iterator();
+		ClockOption menu;
 		while(it.hasNext()) {
-			menu = (ClockSpeed)it.next();
+			menu = (ClockOption)it.next();
 			MenuSite.addLine(this, "Go", menu.getName(), modifier);
 		}
 		// {=endSetup}

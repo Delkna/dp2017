@@ -19,7 +19,6 @@ import com.holub.ui.MenuSite;
 
 import com.holub.life.Cell;
 import com.holub.life.Storable;
-import com.holub.life.Clock;
 import com.holub.life.Neighborhood;
 import com.holub.life.Resident;
 
